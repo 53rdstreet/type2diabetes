@@ -1,0 +1,89 @@
+---
+title: "Opim Practice Quiz 1"
+author: "Zixun Hao"
+date: "`r format(Sys.Date(), '%B %e, %Y')`"
+output:
+  html_document: default
+---
+
+#### Preparation
+```{r setup, include=TRUE, message = FALSE, warning = FALSE}
+require(knitr)
+require(haven)
+require(car)
+require(AER)
+library(jtools)
+require(lm.beta)  ## install.packages("lm.beta")
+library(here)
+
+library(ggplot2)
+library(mfx)
+require(readr)
+library(dplyr)
+library(tidyverse)
+library("sjmisc")
+```
+
+## R Markdown
+
+```{r}
+library(foreign)
+brfss = read.xport("LLCP2019.XPT ")
+```
+
+```{r cars}
+head(brfss)
+```
+
+
+```{r pressure, echo=FALSE}
+brfss0 <- brfss %>%
+  select(DIABETE4, age_diagnose="DIABAGE3",gender="SEXVAR", age="X_AGEG5YR",
+         healthcare_coverage="HLTHPLN1", checkup = "CHECKUP1",
+         mental_health="MENTHLTH",  bmi="X_BMI5CAT",
+         heart_disease="CVDCRHD4", kidney_disease="CHCKDNY2", 
+         depression="ADDEPEV3", concentrate_decide="DECIDE", blind="BLIND",
+         alcohol="X_RFDRHV7",smoke="X_SMOKER3", exercise="EXERANY2",
+         income="INCOME2", race="X_RACE", employed="EMPLOY1",
+         marital = "MARITAL",edu="X_EDUCAG", city_rural="MSCODE")%>%
+  filter(age>2)%>% # age >=30
+  filter(DIABETE4<5) # exclude "Don’t know/Not Sure" and "Refused to answer"
+
+```
+
+```{r pressure, echo=FALSE}
+brfss0
+```
+
+```{r pressure, echo=FALSE}
+brfss_new<-brfss0 %>%
+  to_dummy(DIABETE4, suffix = "label")%>% # change DIABETE4 to dummies
+  bind_cols(brfss0 ) %>% 
+  select(-c(...2,...3,...4,DIABETE4))%>% #only keep "Yes" in DIABETE4
+  rename(type2diabetes = ...1)
+brfss_new
+```
+
+
+```{r}
+# save XPT/SAS file into csv
+write.csv(brfss_new, file="brfss.csv")
+```
+
+```{r}
+```
+
+```{r}
+1	In the center city of an MSA
+2	Outside the center city of an MSA but inside the county containing the center city	
+3	Inside a suburban county of the MSA
+5	Not in an MSA
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
